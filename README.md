@@ -2,6 +2,7 @@
 A Sponge plugin that allows to configure server messages easily
 
 Current version: 0.0.1 Alpha
+ 
 Credits: MrAzErTy31
 
 This is a Sponge open-source Plugin!
