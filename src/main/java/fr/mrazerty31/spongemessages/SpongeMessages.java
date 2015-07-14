@@ -56,8 +56,8 @@ public class SpongeMessages {
 				defaultConfig.createNewFile();
 				config = cfgManager.load();
 				config.getNode("spongemessages", "chat", "format", "message").setValue("<:player:> :message:");
-				config.getNode("spongemessages", "event", "join", "message").setValue("&e:player: joined the game.");
-				config.getNode("spongemessages", "event", "quit", "message").setValue("&e:player: left the game.");
+				config.getNode("spongemessages", "event", "join", "message").setValue("§e:player: joined the game.");
+				config.getNode("spongemessages", "event", "quit", "message").setValue("§e:player: left the game.");
 				config.getNode("spongemessages", "server", "motd", "message").setValue("A Minecraft Server");
 				cfgManager.save(config); 
 			}
