@@ -1,11 +1,12 @@
 # SpongeMessages
 A Sponge plugin that allows to configure server messages easily
 
+Current version: 0.0.2 Release 
+
 Downloads:
  - 0.0.1a: https://goo.gl/ngbv0Q
  - 0.0.2: https://goo.gl/wOP0FN
 
-Current version: 0.0.2 Release
 Credits: MrAzErTy31
 
 This is a Sponge open-source Plugin!
