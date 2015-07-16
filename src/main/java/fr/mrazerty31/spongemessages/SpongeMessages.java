@@ -14,22 +14,22 @@ import org.spongepowered.api.event.state.ServerStoppingEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.service.config.DefaultConfig;
 import org.spongepowered.api.text.Texts;
+import org.spongepowered.api.util.command.args.GenericArguments;
 import org.spongepowered.api.util.command.spec.CommandSpec;
 
 import com.google.inject.Inject;
 
 import fr.mrazerty31.spongemessages.command.SMCommandExecutor;
 import fr.mrazerty31.spongemessages.listener.SMListener;
+import fr.mrazerty31.spongemessages.utils.SMConstants;
+import fr.mrazerty31.spongemessages.utils.SMUtils;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 
-@Plugin(id = SpongeMessages.ID, name = SpongeMessages.NAME, version = SpongeMessages.VERSION)
+@Plugin(id = SMConstants.ID, name = SMConstants.NAME, version = SMConstants.VERSION)
 public class SpongeMessages {
 
-	public static final String ID = "spongemessages", 
-			NAME = "SpongeMessages", 
-			VERSION = "0.0.1a";
 	public static SpongeMessages instance;
 
 	@Inject
@@ -55,10 +55,10 @@ public class SpongeMessages {
 			if (!defaultConfig.exists()) { // Default configuration file
 				defaultConfig.createNewFile();
 				config = cfgManager.load();
-				config.getNode("spongemessages", "chat", "format", "message").setValue("<:player:> :message:");
-				config.getNode("spongemessages", "event", "join", "message").setValue("§e:player: joined the game.");
-				config.getNode("spongemessages", "event", "quit", "message").setValue("§e:player: left the game.");
-				config.getNode("spongemessages", "server", "motd", "message").setValue("A Minecraft Server");
+				config.getNode("spongemessages", "chat", "format", "message").setValue(SMConstants.chatFormat);
+				config.getNode("spongemessages", "event", "join", "message").setValue(SMConstants.joinMessage);
+				config.getNode("spongemessages", "event", "quit", "message").setValue(SMConstants.quitMessage);
+				config.getNode("spongemessages", "server", "motd", "message").setValue(SMConstants.motd);
 				cfgManager.save(config); 
 			}
 			config = cfgManager.load();
@@ -66,7 +66,8 @@ public class SpongeMessages {
 		} catch (IOException exception) {
 			log.error("The default configuration could not be loaded or created!");
 		}
-
+		
+		SMUtils.init();
 		sse.getGame().getEventManager().register(this, new SMListener());
 	}
 
@@ -81,12 +82,29 @@ public class SpongeMessages {
 				.executor(new SMCommandExecutor(this, "reload"))
 				.build();
 		
+		CommandSpec smset = CommandSpec.builder()
+				.description(Texts.of("Set messages."))
+				.permission("spongemessages.cmd.spongemessages.set")
+				.executor(new SMCommandExecutor(this, "set"))
+				.arguments(GenericArguments.onlyOne(GenericArguments.string(Texts.of("type"))), 
+						GenericArguments.remainingJoinedStrings(Texts.of("message")))
+				.build();
+		
+		CommandSpec smreset = CommandSpec.builder()
+				.description(Texts.of("Reset messages."))
+				.permission("spongemessages.cmd.spongemessages.reset")
+				.executor(new SMCommandExecutor(this, "reset"))
+				.arguments(GenericArguments.onlyOne(GenericArguments.string(Texts.of("type"))))
+				.build();
+		
 		// Main Command
 		
 		CommandSpec spongemessages = CommandSpec.builder()
 				.description(Texts.of("Main command of the plugin"))
 				.permission("spongemessages.cmd.spongemessages")
 				.child(smreload, "reload")
+				.child(smset, "set")
+				.child(smreset, "reset")
 				.build();
 
 		ie.getGame().getCommandDispatcher().register(this, spongemessages, "spongemessages", "spongemsg");
@@ -97,19 +115,17 @@ public class SpongeMessages {
 		instance = null;
 	}
 
-	@SuppressWarnings("static-access")
 	@Subscribe
 	public void onServerStarted(ServerStartedEvent sse) {
 		log.info("----------------------------------");
-		log.info("| SpongeMessages v" + this.VERSION + " loaded ! |");
+		log.info("| SpongeMessages v" + SMConstants.VERSION + " loaded ! |");
 		log.info("----------------------------------");
 	}
 
-	@SuppressWarnings("static-access")
 	@Subscribe
 	public void onServerStopped(ServerStoppedEvent sse) {
 		log.info("------------------------------------");
-		log.info("| SpongeMessages v" + this.VERSION + " unloaded ! |");
+		log.info("| SpongeMessages v" + SMConstants.VERSION + " unloaded ! |");
 		log.info("------------------------------------");
 	}
 
